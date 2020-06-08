@@ -23,30 +23,17 @@ RUN mkdir -p /home/ros_catkin_ws/src && \
 	echo "export ROS_PACKAGE_PATH=\${ROS_PACKAGE_PATH}:/home/ros_catkin_ws" >> ~/.bashrc && \
 	echo "export ROS_WORKSPACE=/home/ros_catkin_ws" >> ~/.bashrc && \
 	echo "function cmk(){\n	lastpwd=\$OLDPWD \n	cpath=\$(pwd) \n	cd /home/ros_catkin_ws \n	catkin_make \$@ \n	cd \$cpath \n	OLDPWD=\$lastpwd \n}" >> ~/.bashrc
-########## OpenCV 2.4.9 ##########
-## https://opencv.org/releases/
-# RUN apt-get update && apt-get install -y qtbase5-dev &&\
-# 	mkdir -p /home/opencv_ws &&\
-# 	cd /home/opencv_ws &&\
-# 	wget https://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.9/opencv-2.4.9.zip/download &&\
-# 	unzip download &&\
-# 	cd opencv-2.4.9 &&\
-# 	mkdir build &&\
-# 	cd build &&\
-# 	cmake -D WITH_TBB=ON -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D INSTALL_C_EXAMPLES=ON -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPENGL=ON -D WITH_VTK=ON .. &&\
-# 	make -j $(nproc --all) &&\
-# 	make install
-RUN apt-get update && apt-get install -y qtbase5-dev &&\
-	mkdir -p /home/opencv_ws &&\
-	cd /home/opencv_ws &&\
-	wget https://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.9/opencv-2.4.9.zip/download &&\
-	unzip download &&\
-	cd opencv-2.4.9 &&\
-	mkdir build &&\
-	cd build &&\
-	cmake .. &&\
-	make -j $(nproc --all) &&\
-	make install
+########## ROS packages requirements ##########
+RUN apt-get update && apt-get install -y \
+		ros-kinetic-roslint \
+		ros-kinetic-cv-bridge \
+		ros-kinetic-pcl-ros \
+		ros-kinetic-image-transport \
+		ros-kinetic-image-geometry \
+		ros-kinetic-eigen-conversions \
+		ros-kinetic-costmap-2d \
+		ros-kinetic-camera-info-manager \
+		ros-kinetic-velodyne-pointcloud
 ########## PCL 1.8 ##########
 RUN apt-get update && apt-get install -y libpcl-dev
 ########## Eigen 3.1.0 ##########
@@ -61,6 +48,19 @@ RUN	mkdir -p /home/eigen_ws &&\
 	cmake .. &&\
 	make -j $(nproc --all) &&\
 	make install
+########## OpenCV 2.4.9 ##########
+## https://opencv.org/releases/
+RUN apt-get update && apt-get install -y qtbase5-dev &&\
+	mkdir -p /home/opencv_ws &&\
+	cd /home/opencv_ws &&\
+	wget https://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.9/opencv-2.4.9.zip/download &&\
+	unzip download &&\
+	cd opencv-2.4.9 &&\
+	mkdir build &&\
+	cd build &&\
+	cmake -D WITH_TBB=ON -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D INSTALL_C_EXAMPLES=ON -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPENGL=ON -D WITH_VTK=ON .. &&\
+	make -j $(nproc --all) &&\
+	make install
 ########## but_velodyne_lib ##########
 RUN cd /home &&\
 	git clone https://github.com/robofit/but_velodyne_lib &&\
@@ -70,29 +70,6 @@ RUN cd /home &&\
 	cmake .. &&\
 	make -j $(nproc --all) &&\
 	make install
-########## ROS packages requirements ##########
-# 		ros-kinetic-diagnostic-updater \
-# 		ros-kinetic-tf \
-# 		ros-kinetic-angles \
-RUN apt-get update && apt-get install -y \
-		ros-kinetic-roslint \
-		ros-kinetic-cv-bridge \
-		ros-kinetic-pcl-ros \
-		ros-kinetic-image-transport \
-		ros-kinetic-image-geometry \
-		ros-kinetic-eigen-conversions \
-		ros-kinetic-costmap-2d \
-		ros-kinetic-camera-info-manager \
-		ros-kinetic-velodyne-pointcloud
-########## Other requirements ##########
-# RUN apt-get update && apt-get install -y \
-# 		libyaml-cpp-dev \
-# 		libpcap-dev
-########## velodyne_pointcloud ##########
-# RUN cd /home/ros_catkin_ws/src &&\
-# 	git clone https://github.com/ros-drivers/velodyne &&\
-# 	cd /home/ros_catkin_ws && \
-# 	/bin/bash -c "source /opt/ros/kinetic/setup.bash; catkin_make"
 ########## but_velodyne ##########
 # RUN cd /home/ros_catkin_ws/src &&\
 # 	git clone https://github.com/robofit/but_velodyne &&\
@@ -100,5 +77,6 @@ RUN apt-get update && apt-get install -y \
 # 	/bin/bash -c "source /opt/ros/kinetic/setup.bash; catkin_make"
 RUN cd /home/ros_catkin_ws/src &&\
 	git clone https://github.com/robofit/but_velodyne
+RUN sed -i -e "s/cv::vector/std::vector/g" /usr/local/include/but_velodyne-0.1/but_velodyne/Visualizer3D.h
 ######### initial position ##########
 WORKDIR /home/ros_catkin_ws
