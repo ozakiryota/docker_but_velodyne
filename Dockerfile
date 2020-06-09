@@ -71,12 +71,12 @@ RUN cd /home &&\
 	make -j $(nproc --all) &&\
 	make install
 ########## but_velodyne ##########
-# RUN cd /home/ros_catkin_ws/src &&\
-# 	git clone https://github.com/robofit/but_velodyne &&\
-# 	cd /home/ros_catkin_ws && \
-# 	/bin/bash -c "source /opt/ros/kinetic/setup.bash; catkin_make"
+## http://wiki.ros.org/but_velodyne
 RUN cd /home/ros_catkin_ws/src &&\
-	git clone https://github.com/robofit/but_velodyne
-RUN sed -i -e "s/cv::vector/std::vector/g" /usr/local/include/but_velodyne-0.1/but_velodyne/Visualizer3D.h
+	git clone https://github.com/robofit/but_velodyne &&\
+	sed -i 's/cv::vector/std::vector/g' /usr/local/include/but_velodyne-0.1/but_velodyne/Visualizer3D.h &&\
+	sed -i '1s/^/#include "opencv2\/video\/tracking.hpp"\n/' /usr/local/include/but_velodyne-0.1/but_velodyne/MoveEstimation.h &&\
+	cd /home/ros_catkin_ws && \
+	/bin/bash -c "source /opt/ros/kinetic/setup.bash; catkin_make"
 ######### initial position ##########
 WORKDIR /home/ros_catkin_ws
