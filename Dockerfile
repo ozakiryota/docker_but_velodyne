@@ -48,19 +48,19 @@ RUN	mkdir -p /home/eigen_ws &&\
 	cmake .. &&\
 	make -j $(nproc --all) &&\
 	make install
-########## OpenCV 2.4.9 ##########
-## https://opencv.org/releases/
-RUN apt-get update && apt-get install -y qtbase5-dev &&\
-	mkdir -p /home/opencv_ws &&\
-	cd /home/opencv_ws &&\
-	wget https://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.9/opencv-2.4.9.zip/download &&\
-	unzip download &&\
-	cd opencv-2.4.9 &&\
-	mkdir build &&\
-	cd build &&\
-	cmake -D WITH_TBB=ON -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D INSTALL_C_EXAMPLES=ON -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPENGL=ON -D WITH_VTK=ON .. &&\
-	make -j $(nproc --all) &&\
-	make install
+# ########## OpenCV 2.4.9 ##########
+# ## https://opencv.org/releases/
+# RUN apt-get update && apt-get install -y qtbase5-dev &&\
+# 	mkdir -p /home/opencv_ws &&\
+# 	cd /home/opencv_ws &&\
+# 	wget https://sourceforge.net/projects/opencvlibrary/files/opencv-unix/2.4.9/opencv-2.4.9.zip/download &&\
+# 	unzip download &&\
+# 	cd opencv-2.4.9 &&\
+# 	mkdir build &&\
+# 	cd build &&\
+# 	cmake -D WITH_TBB=ON -D BUILD_NEW_PYTHON_SUPPORT=ON -D WITH_V4L=ON -D INSTALL_C_EXAMPLES=ON -D INSTALL_PYTHON_EXAMPLES=ON -D BUILD_EXAMPLES=ON -D WITH_QT=ON -D WITH_OPENGL=ON -D WITH_VTK=ON .. &&\
+# 	make -j $(nproc --all) &&\
+# 	make install
 ########## but_velodyne_lib ##########
 RUN cd /home &&\
 	git clone https://github.com/robofit/but_velodyne_lib &&\
